@@ -15,11 +15,10 @@ Before you begin, ensure you have the following installed on your local machine:
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-github-repo-url>
-cd internship-assignment
+git clone https://github.com/nikhil-nandanwar/weather-app
+cd weather-app
 ```
 
-Replace `<your-github-repo-url>` with your actual GitHub repository URL.
 
 ### 2. Backend Setup
 
