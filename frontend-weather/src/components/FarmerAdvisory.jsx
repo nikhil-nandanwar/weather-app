@@ -4,17 +4,22 @@ function FarmerAdvisory({ weatherData, forecastData }) {
   const generateAdvisories = () => {
     const advisories = [];
 
-    // Convert temperature from Kelvin to Celsius
     const tempCelsius = weatherData.temperature - 273.15;
     const humidity = weatherData.humidity;
     const windSpeed = weatherData.windSpeed;
     const rainAmount = weatherData.rainAmount || 0;
     const cloudiness = weatherData.cloudiness;
 
-    // Calculate rain probability from cloudiness and rain amount
     const rainProbability = rainAmount > 0 ? 100 : cloudiness;
 
-    // Rule 1: High Rain Probability
+    let rainExpectedIn6Hours = false;
+    if (forecastData && forecastData.list) {
+      const next6Hours = forecastData.list.slice(0, 2);
+      rainExpectedIn6Hours = next6Hours.some(
+        (item) => item.rain?.["3h"] > 0 || item.clouds?.all > 70
+      );
+    }
+
     if (rainProbability > 60 || rainAmount > 0) {
       advisories.push({
         type: "warning",
@@ -25,7 +30,6 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Rule 2: High Temperature
     if (tempCelsius > 35) {
       advisories.push({
         type: "alert",
@@ -44,7 +48,6 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Rule 3: High Wind Speed
     if (windSpeed > 15) {
       advisories.push({
         type: "warning",
@@ -63,7 +66,6 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Rule 4: High Humidity
     if (humidity > 80) {
       advisories.push({
         type: "warning",
@@ -82,18 +84,29 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Rule 5: Good Spraying Window
-    if (windSpeed < 10 && rainProbability < 30 && tempCelsius < 30) {
+    if (
+      windSpeed < 10 &&
+      rainProbability < 30 &&
+      tempCelsius < 30 &&
+      !rainExpectedIn6Hours
+    ) {
       advisories.push({
         type: "success",
         title: "Ideal Spraying Conditions",
         message:
-          "Good window for pesticide application. Low wind and no rain expected.",
+          "Good window for pesticide application. Low wind and no rain expected in the next 6 hours.",
         priority: 1,
+      });
+    } else if (windSpeed < 10 && rainProbability < 30 && rainExpectedIn6Hours) {
+      advisories.push({
+        type: "caution",
+        title: "Rain Expected Soon",
+        message:
+          "Rain expected within 6 hours. Delay pesticide spraying to avoid waste.",
+        priority: 2,
       });
     }
 
-    // Rule 6: Frost Risk (Low Temperature)
     if (tempCelsius < 5) {
       advisories.push({
         type: "alert",
@@ -104,7 +117,6 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Rule 7: Low Humidity
     if (humidity < 30) {
       advisories.push({
         type: "caution",
@@ -115,7 +127,6 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Rule 8: Optimal Conditions
     if (
       tempCelsius >= 15 &&
       tempCelsius <= 28 &&
@@ -133,7 +144,6 @@ function FarmerAdvisory({ weatherData, forecastData }) {
       });
     }
 
-    // Sort by priority
     return advisories.sort((a, b) => a.priority - b.priority);
   };
 

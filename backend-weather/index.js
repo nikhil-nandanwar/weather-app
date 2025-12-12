@@ -2,6 +2,8 @@ import express from "express";
 import connectToMongoDB from "./config/mongodb.config.js";
 import dotenv from "dotenv";
 import { getWeatherData } from "./controller/getWeatherData.controller.js";
+import { getForecastData } from "./controller/getForecastData.controller.js";
+import { saveSearchHistory, getSearchHistory } from "./controller/searchHistory.controller.js";
 import cors from "cors";
 
 dotenv.config();
@@ -21,6 +23,9 @@ app.use(express.json());
 connectToMongoDB(process.env.MONGODB_URI);
 
 app.get("/getweatherdata", getWeatherData);
+app.get("/getforecastdata", getForecastData);
+app.post("/savesearch", saveSearchHistory);
+app.get("/getsearchhistory", getSearchHistory);
 
 app.listen(PORT, () => {
   console.log("app is running at http://localhost:3000");
