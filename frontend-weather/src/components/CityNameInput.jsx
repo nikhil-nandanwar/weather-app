@@ -15,7 +15,7 @@ function CityNameInput() {
 
   const fetchSearchHistory = async () => {
     try {
-      const response = await fetch("http://localhost:3000/getsearchhistory");
+      const response = await fetch("https://weather-app-zhix.vercel.app/getsearchhistory");
       if (response.ok) {
         const result = await response.json();
         setSearchHistory(result.data || []);
@@ -27,7 +27,7 @@ function CityNameInput() {
 
   const saveSearchToHistory = async (city, country, coordinates) => {
     try {
-      await fetch("http://localhost:3000/savesearch", {
+      await fetch("https://weather-app-zhix.vercel.app/savesearch", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ function CityNameInput() {
     
     try {
       const weatherResponse = await fetch(
-        `http://localhost:3000/getweatherdata?city=${cityName}`
+        `https://weather-app-zhix.vercel.app/getweatherdata?city=${cityName}`
       );
       
       if (!weatherResponse.ok) {
@@ -70,7 +70,7 @@ function CityNameInput() {
       }
       
       const forecastResponse = await fetch(
-        `http://localhost:3000/getforecastdata?city=${cityName}`
+        `https://weather-app-zhix.vercel.app/getforecastdata?city=${cityName}`
       );
       
       const forecast = await forecastResponse.json();
